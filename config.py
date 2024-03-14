@@ -16,7 +16,8 @@ class Config:
             "ConfigPath": self.__configPath,
             "EntryPath": self.__entryPath,
             "KeyPath": self.__keyPath,
-            "MasterPassword": self.__masterPassword
+            "MasterPassword": self.__masterPassword,
+            "FirstRun": True
         }
         Utils.writeJson(self.__configPath,data)
 
@@ -31,3 +32,9 @@ class Config:
 
     def getMasterPassword(self):
         return Utils.getValJson(self.__configPath,"MasterPassword")
+
+    def getFirstRun(self):
+        return Utils.getValJson(self.__configPath,"FirstRun")
+
+    def setFirstRun(self,firstRun):
+        Utils.updateValJson(self.__configPath,"FirstRun",firstRun)

@@ -39,7 +39,7 @@ class Utils:
     @staticmethod
     def question(placeholder):
         while True:
-            answer = str(input(f"Choose '{placeholder}'?"))
+            answer = str(input(f"Choose '{placeholder}'? "))
             if answer == "y":
                 return True
             elif answer == "n":

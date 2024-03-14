@@ -1,5 +1,6 @@
 from cryptography.fernet import Fernet
-from utils import Utils
+from utils import Utils#
+import json
 
 class Encryption:
     def __init__(self,configPath):
@@ -8,12 +9,15 @@ class Encryption:
         self.__key = Utils.readBinary(key_path)
 
     def encrypt(self, plaintext):
-        cipher_suite = Fernet(self.__key)
-        encrypted_text = cipher_suite.encrypt(plaintext.encode())
+        cipherSuite = Fernet(self.__key)
+        entriesList = json.dumps(plaintext).encode()
+        encryptedList = cipherSuite.encrypt(entriesList)
 
-        return encrypted_text
+        return encryptedList
 
-    def decrypt(self, encrypted_text):
-        cipher_suite = Fernet(self.__key)
-        decrypted_text = cipher_suite.decrypt(encrypted_text).decode()
-        return decrypted_text
+    def decrypt(self, encryptedText):
+        cipherSuite = Fernet(self.__key)
+        decryptedText = cipherSuite.decrypt(encryptedText)
+        decryptedList = json.loads(decryptedText.decode())
+
+        return decryptedList

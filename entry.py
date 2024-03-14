@@ -1,11 +1,17 @@
 import os
-import json
 
 from utils import Utils
 class Entry:
     def __init__(self,configPath):
         config_data = Utils.readJson(configPath)
-        self.__entryPath = config_data["entry.json"]
+        self.__entryPath = config_data["EntryPath"]
+
+    def createInitialEntryFile(self):
+        data = {
+            "Entries": [],
+            "Encrypted": False
+        }
+        Utils.writeJson(self.__entryPath, data)
 
     def __checkEntryFile(self):
         return os.path.exists(self.__entryPath)
@@ -34,3 +40,13 @@ class Entry:
     def getEncrypted(self):
         encrypted = Utils.getValJson(self.__entryPath, "Encrypted")
         return encrypted
+
+    def setEntries(self, entries):
+        Utils.updateValJson(self.__entryPath, "Entries",entries)
+
+    def setEncrypted(self, encrypted):
+        if isinstance(encrypted, bool):
+            Utils.updateValJson(self.__entryPath, "Encrypted",encrypted)
+        else:
+            print("Argument has to be a boolean value")
+

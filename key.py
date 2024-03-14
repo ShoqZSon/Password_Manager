@@ -26,5 +26,5 @@ class Key:
     def setKey(self, key):
         self.__key = key
 
-    def writeKey(self):
-        Utils.writeBinary(self.__keyPath, self.__key)
+    def writeKey(self,keyPath):
+        Utils.writeBinary(keyPath, self.__key)
