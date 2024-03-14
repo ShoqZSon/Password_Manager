@@ -1,4 +1,4 @@
-# Password_Manager
+# Password Manager
 Simple Password Manager written in Python 3
 
 ## Features
@@ -9,5 +9,5 @@ Simple Password Manager written in Python 3
 [ ] Decrypting the Entries array \
 
 ## Security Measurements:
-[ ] Securing the config file
-[ ] preventing unauthorized alteration of config file
+[ ] Securing the config file \
+[ ] preventing unauthorized alteration of config file \

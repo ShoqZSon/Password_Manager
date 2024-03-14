@@ -3,9 +3,8 @@ import json
 
 from utils import Utils
 class Entry:
-    def __init__(self):
-        self.__configPath = os.path.join(os.getcwd(), "config.json")
-        config_data = Utils.readJson(self.__configPath)
+    def __init__(self,configPath):
+        config_data = Utils.readJson(configPath)
         self.__entryPath = config_data["entry.json"]
 
     def __checkEntryFile(self):
