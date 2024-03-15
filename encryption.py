@@ -10,8 +10,8 @@ class Encryption:
 
     def encrypt(self, plaintext):
         cipherSuite = Fernet(self.__key)
-        entriesList = json.dumps(plaintext).encode()
-        encryptedList = cipherSuite.encrypt(entriesList)
+
+        encryptedList = cipherSuite.encrypt(plaintext.encode('utf-8'))
 
         return encryptedList
 

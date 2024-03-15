@@ -7,6 +7,7 @@ class Config:
         self.__entryPath = os.path.join(os.getcwd(),"entry.json")
         self.__keyPath = os.path.join(os.getcwd(),"key.key")
         self.__masterPassword = ""
+        self.__firstRun = False
 
     def checkConfigFile(self):
         return os.path.exists(self.__configPath)
@@ -34,7 +35,10 @@ class Config:
         return Utils.getValJson(self.__configPath,"MasterPassword")
 
     def getFirstRun(self):
-        return Utils.getValJson(self.__configPath,"FirstRun")
+        return bool(Utils.getValJson(self.__configPath,"FirstRun"))
 
     def setFirstRun(self,firstRun):
-        Utils.updateValJson(self.__configPath,"FirstRun",firstRun)
+        if isinstance(firstRun,bool):
+            Utils.updateValJson(self.__configPath,"FirstRun",firstRun)
+        else:
+            print("Argument has to be a boolean value")

@@ -4,7 +4,6 @@ from key import Key
 from encryption import Encryption
 from utils import Utils
 
-import time
 import hashlib
 import string
 import random
@@ -60,7 +59,11 @@ def setPassword(passwordLength):
         if Utils.question(password):
             return password
         else:
-            setPassword()
+            setPassword(passwordLength)
+
+def convertListToString(myList):
+    result_string = '[' + ','.join([f'"{x}"' for x in myList]) + ']'
+    return result_string
 
 def main():
     print("---- Password Manager ----")
@@ -106,14 +109,12 @@ def main():
 
                 entry.createEntry(usage,password)
                 entries = entry.getEntries()
-                time.sleep(15)
-                encryptedEntries = encrypt.encrypt(entries)
-                print(encryptedEntries)
-                # setting encrypted entries throws a TypeError
-                # TODO: need setEntries method for setting the binary data as string or json format
+                entryString = convertListToString(entries)
+                encryptedEntries = encrypt.encrypt(entryString)
                 entry.setEntries(encryptedEntries)
+                entry.setEncrypted(True)
                 config.setFirstRun(False)
-            elif entry.getEncrypted() and not config.getFirstRun():
+            if entry.getEncrypted() and not config.getFirstRun():
                 # get the whole entry data
                 entries = entry.getEntries()
                 # decrypt the data
@@ -140,6 +141,7 @@ def main():
                 print("Entries are not encrypted.")
                 print("Process canceled.")
                 print("Address this issue immediately")
+            break
         elif option == 2:
             if config.getFirstRun():
                 print("No entries have been set")
@@ -151,11 +153,15 @@ def main():
                 print("Entries are not encrypted.")
                 print("Process canceled.")
                 print("Address this issue immediately")
+            break
         elif option == 3:
-            print("Exiting password manager")
+            print("Closing password manager")
             exit(0)
         else:
             print("Invalid choice. Please try again.")
+
+    print("Closing password manager")
+    exit(0)
 
 if __name__ == "__main__":
     main()

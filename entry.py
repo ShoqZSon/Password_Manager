@@ -34,12 +34,10 @@ class Entry:
         Utils.writeJson(self.__entryPath, data)
 
     def getEntries(self):
-        entries = Utils.getValJson(self.__entryPath, "Entries")
-        return entries
+        return Utils.getValJson(self.__entryPath, "Entries")
 
     def getEncrypted(self):
-        encrypted = Utils.getValJson(self.__entryPath, "Encrypted")
-        return encrypted
+        return bool(Utils.getValJson(self.__entryPath, "Encrypted"))
 
     def setEntries(self, entries):
         Utils.updateValJson(self.__entryPath, "Entries",entries)
@@ -49,4 +47,3 @@ class Entry:
             Utils.updateValJson(self.__entryPath, "Encrypted",encrypted)
         else:
             print("Argument has to be a boolean value")
-
