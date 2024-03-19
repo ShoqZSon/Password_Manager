@@ -18,6 +18,6 @@ class Encryption:
     def decrypt(self, encryptedText):
         cipherSuite = Fernet(self.__key)
         decryptedText = cipherSuite.decrypt(encryptedText)
-        decryptedList = json.loads(decryptedText.decode())
+        decryptedList = decryptedText.decode('utf-8')
 
         return decryptedList

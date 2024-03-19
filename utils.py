@@ -46,3 +46,30 @@ class Utils:
                 return False
             else:
                 print("Invalid answer. Try again.")
+
+    @staticmethod
+    def listToString(myList):
+        resultString = '[' + ','.join([f'{x}' for x in myList]) + ']'
+        return resultString
+
+    @staticmethod
+    def bytesToString(byteData):
+        if isinstance(byteData, bytes):
+            return byteData.decode('utf-8')  # Assuming utf-8 encoding
+        else:
+            raise ValueError("Input must be bytes type")
+
+    @staticmethod
+    def stringToBytes(stringData):
+        if isinstance(stringData, str):
+            return stringData.encode('utf-8')  # Assuming utf-8 encoding
+        else:
+            raise ValueError("Input must be string type")
+
+    @staticmethod
+    def stringToList(string):
+        jsonAcceptableString = string.replace("'","\"")
+        jsonString = json.loads(jsonAcceptableString)
+
+        return jsonString
+

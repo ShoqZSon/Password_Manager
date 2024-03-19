@@ -47,7 +47,8 @@ def setPasswordLength():
             print("Password length has to be between 10 and 20 (inclusive)")
 
 def setPassword(passwordLength):
-    characters = string.ascii_letters + string.digits + string.punctuation
+    punctuation = "!#$%&()*+,-./:;<=>?@[\]^_`{|}~"
+    characters = string.ascii_letters + string.digits + punctuation
     random.shuffle(list(characters))
 
     passwordList = [""] * passwordLength
@@ -60,10 +61,6 @@ def setPassword(passwordLength):
             return password
         else:
             setPassword(passwordLength)
-
-def convertListToString(myList):
-    result_string = '[' + ','.join([f'"{x}"' for x in myList]) + ']'
-    return result_string
 
 def main():
     print("---- Password Manager ----")
@@ -96,31 +93,46 @@ def main():
 
     encrypt = Encryption(configPath)
 
-    print("Options:")
-    print("1. Generate a new entry")
-    print("2. Show stored passwords")
-    print("3. Exit")
     while True:
+        print("Options:")
+        print("1. Generate a new entry")
+        print("2. Show stored passwords")
+        print("3. Exit")
         option = int(input("Enter your option: "))
         if option == 1:
             if config.getFirstRun():
+                print("First Run")
                 usage = setUsage()
                 password = setPassword(setPasswordLength())
 
                 entry.createEntry(usage,password)
                 entries = entry.getEntries()
-                entryString = convertListToString(entries)
+
+                entryString = Utils.listToString(entries)
                 encryptedEntries = encrypt.encrypt(entryString)
+
+                try:
+                    encryptedEntries = Utils.bytesToString(encryptedEntries)
+                except Exception as e:
+                    print(e)
+
                 entry.setEntries(encryptedEntries)
                 entry.setEncrypted(True)
                 config.setFirstRun(False)
-            if entry.getEncrypted() and not config.getFirstRun():
+            elif entry.getEncrypted() and not config.getFirstRun():
+                print("Not first run")
                 # get the whole entry data
-                entries = entry.getEntries()
+                encryptedEntriesString = entry.getEntries()
+
+                # convert string to bytes
+                encryptedEntryBytes = Utils.stringToBytes(encryptedEntriesString)
+
                 # decrypt the data
-                decryptedEntries = encrypt.decrypt(entries)
+                decryptedEntries = encrypt.decrypt(encryptedEntryBytes)
+                jsonEntries = Utils.stringToList(decryptedEntries)
+
                 # write the decrypted entries back to file
-                entry.setEntries(decryptedEntries)
+                entry.setEntries(jsonEntries)
                 # set the encrypted status to False
                 entry.setEncrypted(False)
 
@@ -131,37 +143,40 @@ def main():
                 entry.createEntry(usage,password)
                 # get the whole entry data
                 entries = entry.getEntries()
+
+                entries = Utils.listToString(entries)
+
                 # encrypt the data
                 encryptedEntries = encrypt.encrypt(entries)
+                encryptedEntriesString = Utils.bytesToString(encryptedEntries)
                 # write the encrypted data back to file
-                entry.setEntries(encryptedEntries)
+                entry.setEntries(encryptedEntriesString)
                 # set encrypted status to True
                 entry.setEncrypted(True)
             else:
                 print("Entries are not encrypted.")
                 print("Process canceled.")
                 print("Address this issue immediately")
-            break
         elif option == 2:
             if config.getFirstRun():
                 print("No entries have been set")
-            if entry.getEncrypted() and not config.getFirstRun():
+            elif entry.getEncrypted() and not config.getFirstRun():
                 encryptedEntries = entry.getEntries()
                 decryptedEntries = encrypt.decrypt(encryptedEntries)
-                print(decryptedEntries)
+                entryList = Utils.stringToList(decryptedEntries)
+                for entry in entryList:
+                    for key, value in entry.items():
+                        print(f'{key}: {value}')
+                    print("")
             else:
                 print("Entries are not encrypted.")
                 print("Process canceled.")
                 print("Address this issue immediately")
-            break
         elif option == 3:
             print("Closing password manager")
             exit(0)
         else:
             print("Invalid choice. Please try again.")
-
-    print("Closing password manager")
-    exit(0)
 
 if __name__ == "__main__":
     main()
