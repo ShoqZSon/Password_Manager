@@ -20,11 +20,18 @@ class Key:
     def checkKey(self):
         return os.path.exists(self.__keyPath)
 
+    def writeKey(self):
+        Utils.writeBinary(self.__keyPath, self.__key)
+
     def getKey(self):
         return self.__key
+
+    def getKeyPath(self):
+        return self.__keyPath
 
     def setKey(self, key):
         self.__key = key
 
-    def writeKey(self,keyPath):
-        Utils.writeBinary(keyPath, self.__key)
+    def setKeyPath(self, keyPath):
+        self.__keyPath = keyPath
+

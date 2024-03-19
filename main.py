@@ -8,6 +8,7 @@ import hashlib
 import string
 import random
 
+# checks if there is a master password set inside the config file
 def checkPassword(path,user_password):
     data = Utils.readJson(path)
     password = data["MasterPassword"]
@@ -16,6 +17,7 @@ def checkPassword(path,user_password):
     else:
         return False
 
+# sets the password that will be used for authorization at the start
 def setMasterPassword():
     password = str(input("Please enter your initial master password: "))
     if Utils.question(password):
@@ -23,17 +25,10 @@ def setMasterPassword():
     else:
         setMasterPassword()
 
+# hashes the master password
 def hashPassword(password):
     hashed = hashlib.sha256(password.encode()).hexdigest()
     return hashed
-
-def setUsage():
-    while True:
-        usage = str(input("Enter the passwords usage: "))
-        if Utils.question(usage):
-            break
-
-    return usage
 
 def setPasswordLength():
     while True:
@@ -46,25 +41,41 @@ def setPasswordLength():
         else:
             print("Password length has to be between 10 and 20 (inclusive)")
 
-def setPassword(passwordLength):
+# takes the password length, shuffles a-z,A-Z,0-9 and punctuation (except " and ')
+def setPassword(length):
     punctuation = "!#$%&()*+,-./:;<=>?@[\]^_`{|}~"
     characters = string.ascii_letters + string.digits + punctuation
     random.shuffle(list(characters))
 
-    passwordList = [""] * passwordLength
+    passwordList = [""] * length
     while True:
-        for _ in range(passwordLength):
+        for _ in range(length):
             passwordList.append(random.choice(characters))
 
         password = "".join(passwordList)
         if Utils.question(password):
             return password
         else:
-            setPassword(passwordLength)
+            setPassword(length)
+
+# sets the use case for the password
+def setUsage():
+    while True:
+        usage = str(input("Enter the passwords usage: "))
+        if Utils.question(usage):
+            break
+
+    return usage
 
 def main():
     print("---- Password Manager ----")
     config = Config()
+    # checks if the config file exists
+    # if it does it asks for the master password
+    # else it creates:
+        # the config with default values
+        # master password, hashes it and saves it
+        # creates the key for encryption of the entries
     if config.checkConfigFile():
         configPath = config.getConfigPath()
         while True:
@@ -83,12 +94,21 @@ def main():
         hashedPassword = hashPassword(setMasterPassword())
         Utils.updateValJson(configPath,"MasterPassword",hashedPassword)
 
+        # creation of the key object
         key = Key(configPath)
+        # generate the key and return it
         key_k = key.generateKey()
+        # sets the private attribute key in the key object
         key.setKey(key_k)
-        key.writeKey(config.getKeyPath())
+        # sets the private attribute keyPath in the key object
+        key.setKeyPath(config.getKeyPath())
+        # writes the actual key
+        key.writeKey()
 
+        # creates the entry object with the proper config path
         entry = Entry(configPath)
+
+        # creates the initial file where the entries will be stored
         entry.createInitialEntryFile()
 
     encrypt = Encryption(configPath)
@@ -100,8 +120,9 @@ def main():
         print("3. Exit")
         option = int(input("Enter your option: "))
         if option == 1:
+            # if the firstRun flag is set on True no decryption needed
+            # and appending to the empty list
             if config.getFirstRun():
-                print("First Run")
                 usage = setUsage()
                 password = setPassword(setPasswordLength())
 
@@ -120,7 +141,6 @@ def main():
                 entry.setEncrypted(True)
                 config.setFirstRun(False)
             elif entry.getEncrypted() and not config.getFirstRun():
-                print("Not first run")
                 # get the whole entry data
                 encryptedEntriesString = entry.getEntries()
 

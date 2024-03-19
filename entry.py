@@ -26,6 +26,7 @@ class Entry:
 
         Utils.writeJson(self.__entryPath, data)
 
+
     def createInitialEntry(self):
         data = {
             "Entries": [],
@@ -34,7 +35,10 @@ class Entry:
         Utils.writeJson(self.__entryPath, data)
 
     def getEntries(self):
-        return Utils.getValJson(self.__entryPath, "Entries")
+        if self.__checkEntryFile():
+            return Utils.getValJson(self.__entryPath, "Entries")
+        else:
+            raise FileNotFoundError("")
 
     def getEncrypted(self):
         return bool(Utils.getValJson(self.__entryPath, "Encrypted"))
